@@ -63,10 +63,10 @@ mongoose.connect(process.env.CONNEXION_STRING,{
 //********************************************************************************************************** */
 // ----------------------Server connexion & PORT---------------------
 //developpement
-app.listen(3000,()=>{
+/*app.listen(3000,()=>{
     
     console.log('Serveur lancé');
-})
+})*/
 //Production server Hors localhost
 var server=app.listen(process.env.PORT || 3000,function(){
     var port =server.address().port;
