@@ -10,6 +10,7 @@ const FILE_TYPE_MAP ={ // Type de fichier accepter au niveau de la BDD
     'image/png':'png',
     'image/jpeg':'jpeg',
     'image/jpg':'jpg',
+    'image/jfif':'jfif',
 }
 
 //********************************************************************************************************** */
