@@ -109,42 +109,39 @@ router.post(`/`,uploadOptions.single('image'), async (req,res)=>{
 
 //********************************************************************************************************** */
 // -------------Modifier Produit----------------
-router.put('/:id',async (req,res)=>{
-    if(!mongoose.isValidObjectId(req.params.id)) //Validé l'id
-    res.status(400).send('Invalid produit')
-
-    const category=await Category.findById(req.body.category);//Valider la catégorie
-    if (!category)
-    return res.status(400).send('Invalid category')
-
-    const product = await Product.findByIdAndUpdate(
-        req.params.id,
-        {
-        name:req.body.name,
-        description:req.body.description,
-        richDescription:req.body.richDescription,
-        image:req.body.image,
-        images:req.body.images,
-        brand:req.body.brand,
-        price:req.body.price,
-        category:req.body.category,
-        countInStock:req.body.countInStock,
-        rating:req.body.rating,
-        numReviews: req.body.numReviews,
-        isFeatured :req.body.isFeatured,
-        },
-        {
-            new:true
-        }
-        
-        )
-        if (!product)
-        return res.status(500).send ("Le produit ne peux pas être modifier")
-        res.send (product);
-        
-
-})
-
+router.put("/:id", uploadOptions.single("image"), async (req, res) => {
+  if (!mongoose.isValidObjectId(req.params.id)) {
+    return res.status(400).send("Invalid Product Id");
+  }
+ 
+  const file = req.file;
+  const category = await Category.findById(req.body.category);
+  if (!category) return res.status(400).send("Invalid Category");
+  const fileName = file.filename;
+  const basePath = `${req.protocol}://${req.get("host")}/public/uploads/`;
+ 
+  const product = await Product.findByIdAndUpdate(
+    req.params.id,
+    {
+      name: req.body.name,
+      description: req.body.description,
+      richDescription: req.body.richDescription,
+      image: `${basePath}${fileName}`,
+      brand: req.body.brand,
+      price: req.body.price,
+      category: req.body.category,
+      countInStock: req.body.countInStock,
+      rating: req.body.rating,
+      numReviews: req.body.numReviews,
+      isFeatured: req.body.isFeatured,
+    },
+    { new: true }
+  );
+ 
+  if (!product) return res.status(500).send("the product cannot be updated!");
+ 
+  res.send(product);
+});
 //********************************************************************************************************** */
 // -------------Supprimer Produit----------------
 router.delete('/:id',(req,res)=>{
