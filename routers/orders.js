@@ -3,8 +3,6 @@ const router=express.Router();
 const {Order}=require ('../models/order')
 const {OrderItem}=require ('../models/orderitem') // Importation du model
 const mongoose=require('mongoose');
-//********************************************************************************************************** */
-// -------------Get LISTE des commandes----------------
 router.get(`/`, async (req, res) =>{
     const orderList = await Order.find().populate('user', 'name').sort({'dateOrdered': -1});
 
@@ -13,8 +11,7 @@ router.get(`/`, async (req, res) =>{
     } 
     res.send(orderList);
 })
-//********************************************************************************************************** */
-// -------------Get une seule commandes----------------
+
 router.get(`/:id`, async (req, res) =>{
     const order = await Order.findById(req.params.id)
     .populate('user', 'name')
@@ -28,8 +25,7 @@ router.get(`/:id`, async (req, res) =>{
     } 
     res.send(order);
 })
-//********************************************************************************************************** */
-// -------------Créer une commande----------------
+
 router.post('/', async (req,res)=>{
     const orderItemsIds = Promise.all(req.body.orderItems.map(async (orderItem) =>{
         let newOrderItem = new OrderItem({
@@ -71,8 +67,7 @@ router.post('/', async (req,res)=>{
     res.send(order);
 })
 
-//********************************************************************************************************** */
-// -------------modifier commandes----------------
+
 router.put('/:id',async (req, res)=> {
     const order = await Order.findByIdAndUpdate(
         req.params.id,
@@ -88,8 +83,7 @@ router.put('/:id',async (req, res)=> {
     res.send(order);
 })
 
-//********************************************************************************************************** */
-// -------------Supprimer une commandes----------------
+
 router.delete('/:id', (req, res)=>{
     Order.findByIdAndRemove(req.params.id).then(async order =>{
         if(order) {
@@ -104,8 +98,7 @@ router.delete('/:id', (req, res)=>{
        return res.status(500).json({success: false, error: err}) 
     })
 })
-//********************************************************************************************************** */
-// -------------Avoir la totalité des ventes----------------
+
 router.get('/get/totalsales', async (req, res)=> {
     const totalSales= await Order.aggregate([
         { $group: { _id: null , totalsales : { $sum : '$totalPrice'}}}
@@ -118,8 +111,6 @@ router.get('/get/totalsales', async (req, res)=> {
     res.send({totalsales: totalSales.pop().totalsales})
 })
 
-//********************************************************************************************************** */
-// -------------Calcul nombre de commandes----------------
 router.get(`/get/count`, async (req, res) =>{
     const orderCount = await Order.countDocuments((count) => count)
 
@@ -131,8 +122,6 @@ router.get(`/get/count`, async (req, res) =>{
     });
 })
 
-//********************************************************************************************************** */
-// -------------Commande pour chaque utilisateur----------------
 router.get(`/get/userorders/:userid`, async (req, res) =>{
     const userOrderList = await Order.find({user: req.params.userid}).populate({ 
         path: 'orderItems', populate: {
